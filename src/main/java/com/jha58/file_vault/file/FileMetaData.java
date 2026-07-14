@@ -1,6 +1,9 @@
 package com.jha58.file_vault.file;
 
 import java.time.LocalDateTime;
+
+import com.jha58.file_vault.user.User;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,12 +13,15 @@ public class FileMetaData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private String name;
     private String contentType;
     private LocalDateTime uploadedAt;
     private Long size;
     private String storagePath = "uploads/";
-    private String user_id;
 
     // Empty constructor for File entity
     public FileMetaData() {}
@@ -33,12 +39,12 @@ public class FileMetaData {
         return name;
     }
 
-    public void setUserId(String user_id) {
-        this.user_id = user_id;
+    public void setOwner(User user) {
+        this.user = user;
     }
 
-    public String getUserId() {
-        return user_id;
+    public User getOwner() {
+        return user;
     }
 
     public void setName(String name) {

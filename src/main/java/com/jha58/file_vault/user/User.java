@@ -8,8 +8,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+
 
     private String username;
     private String email;
