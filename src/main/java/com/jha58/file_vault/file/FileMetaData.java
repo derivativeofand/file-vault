@@ -1,4 +1,4 @@
-package com.jha58.file_vault;
+package com.jha58.file_vault.file;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
@@ -14,7 +14,8 @@ public class FileMetaData {
     private String contentType;
     private LocalDateTime uploadedAt;
     private Long size;
-    private String storagePath = "C:/file_vault_storage/";
+    private String storagePath = "uploads/";
+    private String user_id;
 
     // Empty constructor for File entity
     public FileMetaData() {}
@@ -30,6 +31,14 @@ public class FileMetaData {
 
     public String getName() {
         return name;
+    }
+
+    public void setUserId(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public String getUserId() {
+        return user_id;
     }
 
     public void setName(String name) {
