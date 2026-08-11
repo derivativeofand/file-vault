@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/uploads")
+@RequestMapping("/files")
 public class FileController {
     
     @Autowired
@@ -23,6 +23,7 @@ public class FileController {
     public FileMetaData getFileById(@PathVariable Long id) {
         return fileService.getFileById(id);
     }
+
 
     @GetMapping("/filter") 
     public List<FileMetaData> getFilesByContentType(@RequestParam String contentType) {

@@ -2,17 +2,18 @@ package com.jha58.file_vault.user;
 
 import jakarta.persistence.*;
 
+
+@Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
 
-
-
     private String username;
     private String email;
-    private Long password;
+    private String password;
 
     // Getters and Setters
     public Long getUserId() {
@@ -39,11 +40,11 @@ public class User {
         this.email = email;
     }
 
-    public Long getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(Long password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
