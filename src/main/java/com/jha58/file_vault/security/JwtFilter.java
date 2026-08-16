@@ -53,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 } catch (Exception e) {
-                    System.out.println("JWT validaation failed: " + e.getMessage());
+                    System.out.println("JWT validation failed: " + e.getMessage());
                 }
                 
                 

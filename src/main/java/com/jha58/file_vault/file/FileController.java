@@ -4,8 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.io.IOException;
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/files")
@@ -18,6 +22,11 @@ public class FileController {
     public List<FileMetaData> getAllFiles() {
         return fileService.getAllFiles();
     }
+
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
+    
 
     @GetMapping("/{id}")
     public FileMetaData getFileById(@PathVariable Long id) {
@@ -34,11 +43,6 @@ public class FileController {
     public FileMetaData uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         return fileService.uploadFile(file);
     }
-    
-    // @PutMapping("/{id}")
-    // public FileMetaData updateFile(@PathVariable Long id, @RequestBody FileMetaData file) {
-    //     return fileService.updateFile(id, file);
-    // }
 
     @DeleteMapping("/{id}")
     public void deleteFile(@PathVariable Long id) throws IOException {

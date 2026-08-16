@@ -3,6 +3,9 @@ package com.jha58.file_vault.file;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.jha58.file_vault.user.User;
+import com.jha58.file_vault.user.UserRepository;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,8 +20,14 @@ public class FileService {
     @Autowired
     private FileRepository fileRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<FileMetaData> getAllFiles() {
-        return fileRepository.findAll();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User owner = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+        return fileRepository.findByUser(owner);
     }
 
     public FileMetaData getFileById(Long id) {
@@ -35,6 +44,13 @@ public class FileService {
             Files.createDirectories(uploadDir);
         }
 
+        String username = SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName();
+
+        User user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
         Path storagePath = Paths.get("uploads/" + uniqueFileName);
 
         Files.copy(file.getInputStream(), storagePath);
@@ -43,6 +59,7 @@ public class FileService {
         fileMetaData.setName(file.getOriginalFilename());
         fileMetaData.setContentType(file.getContentType());
         fileMetaData.setSize(file.getSize());
+        fileMetaData.setOwner(user);
         fileMetaData.setStoragePath(storagePath.toString());
         fileMetaData.setUploadedAt(java.time.LocalDateTime.now());
         return fileRepository.save(fileMetaData);
@@ -70,6 +87,13 @@ public class FileService {
     }
 
     public List<FileMetaData> getFilesByContentType(String contentType) {
-        return fileRepository.findByContentType(contentType);
+        String username = SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName();
+
+        User user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return fileRepository.findByContentType(contentType, user);
     }
 }
