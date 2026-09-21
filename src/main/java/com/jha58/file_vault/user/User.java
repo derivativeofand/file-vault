@@ -2,8 +2,10 @@ package com.jha58.file_vault.user;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
@@ -14,23 +16,24 @@ import jakarta.persistence.*;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     private String username;
     private String email;
     private String password;
+    private String role; 
 
     public User() {
     }
 
     // Getters and Setters
-    public Long getUserId() {
-        return user_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(Long user_id) {
-        this.user_id = user_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -58,11 +61,14 @@ public class User implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(); // no roles yet, empty list for now
+
+    public String getRole() {
+        return role;
     }
+
+    public void setRole(String role) {
+        this.role = role;
+    }   
 
     @Override
     public boolean isAccountNonExpired() { return true; }
@@ -75,5 +81,10 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() { return true; }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role));
+    }
 
 }

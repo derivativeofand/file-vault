@@ -23,11 +23,6 @@ public class FileController {
         return fileService.getAllFiles();
     }
 
-    public String getMethodName(@RequestParam String param) {
-        return new String();
-    }
-    
-
     @GetMapping("/{id}")
     public FileMetaData getFileById(@PathVariable Long id) {
         return fileService.getFileById(id);

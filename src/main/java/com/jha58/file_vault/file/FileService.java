@@ -24,15 +24,28 @@ public class FileService {
     private UserRepository userRepository;
 
     public List<FileMetaData> getAllFiles() {
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
         User owner = userRepository.findByUsername(username)
                         .orElseThrow(() -> new RuntimeException("User not found"));
+
         return fileRepository.findByUser(owner);
     }
 
     public FileMetaData getFileById(Long id) {
-        return fileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("File not found with id: " + id));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        FileMetaData file = fileRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("File not found"));
+
+        // Safeguard for the case where the file's owner is not the currently authenticated user
+        if (!file.getOwner().getUsername().equals(username)) {
+            throw new RuntimeException("Access Denied");
+        }
+
+        return file;
     }
 
     public FileMetaData uploadFile(MultipartFile file) throws IOException {
@@ -73,12 +86,26 @@ public class FileService {
     }
 
     public void deleteFile(Long id) throws IOException {
+        String username = SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getName();
+                        
+        User currentUser = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
         FileMetaData file = fileRepository.findById(id).orElseThrow(() 
-        -> new RuntimeException("File not found with id: " + id));
+        -> new RuntimeException("File not found")); 
 
-        Path storagePath = Paths.get(file.getStoragePath());
-        Files.deleteIfExists(storagePath);
 
+        boolean isAdmin = currentUser.getRole().contains("ADMIN");
+        boolean isOwner = file.getOwner().getUsername().equals(username);
+
+        // Safeguard for the case where the file's owner is not the currently authenticated user
+        if(!isOwner && !isAdmin) {
+            throw new RuntimeException("Access Denied");
+        }
+
+        Files.deleteIfExists(Paths.get(file .getStoragePath()));
         fileRepository.deleteById(id);
     }
 
@@ -95,5 +122,9 @@ public class FileService {
                         .orElseThrow(() -> new RuntimeException("User not found"));
 
         return fileRepository.findByContentType(contentType, user);
+    }
+
+    public List<FileMetaData> getAllFilesAdmin() {
+        return fileRepository.findAll();
     }
 }

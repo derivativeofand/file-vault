@@ -1,26 +1,37 @@
 package com.jha58.file_vault.file;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.jha58.file_vault.user.User;
 
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "files")
 public class FileMetaData {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private String name;
-    private String contentType;
+
+    @Column(nullable = false)
+    private String contentType;  
+
+    @Column(nullable = false)
     private LocalDateTime uploadedAt;
+
+    @Column(nullable = false)
     private Long size;
+
+    @Column(nullable = false)
     private String storagePath = "uploads/";
 
     // Empty constructor for File entity

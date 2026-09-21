@@ -22,5 +22,6 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
         return jwtUtil.generateToken(authentication.getName());
+
     }
 }

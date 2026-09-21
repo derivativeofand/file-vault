@@ -37,13 +37,14 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("ROLE_USER");
         return userRepository.save(user);
     }
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-
+            .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        
         List<FileMetaData> userFiles = fileRepository.findByUser(user);
         for(FileMetaData file : userFiles) {
             try {
@@ -59,4 +60,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
 }
