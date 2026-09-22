@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.jha58.file_vault.file.FileRepository;
 import com.jha58.file_vault.file.FileMetaData;
@@ -63,4 +64,5 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
 }

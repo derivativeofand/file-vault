@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.jha58.file_vault.user.User;
 import com.jha58.file_vault.user.UserRepository;
+import com.jha58.file_vault.rag.RagService;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +23,9 @@ public class FileService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RagService ragService;
 
     public List<FileMetaData> getAllFiles() {
 
@@ -57,9 +61,11 @@ public class FileService {
             Files.createDirectories(uploadDir);
         }
 
+        // Get the currently authenticated user
         String username = SecurityContextHolder.getContext()
                         .getAuthentication()
                         .getName();
+
 
         User user = userRepository.findByUsername(username)
                         .orElseThrow(() -> new RuntimeException("User not found"));
@@ -68,6 +74,7 @@ public class FileService {
 
         Files.copy(file.getInputStream(), storagePath);
 
+        // Create and save FileMetaData
         FileMetaData fileMetaData = new FileMetaData();
         fileMetaData.setName(file.getOriginalFilename());
         fileMetaData.setContentType(file.getContentType());
@@ -75,7 +82,14 @@ public class FileService {
         fileMetaData.setOwner(user);
         fileMetaData.setStoragePath(storagePath.toString());
         fileMetaData.setUploadedAt(java.time.LocalDateTime.now());
-        return fileRepository.save(fileMetaData);
+        
+        // Save the file metadata to the database
+        FileMetaData savedFileMetaData = fileRepository.save(fileMetaData);
+
+        // Process the file with RagService
+        ragService.processFile(fileMetaData, file);
+
+        return savedFileMetaData;
     }
 
     public FileMetaData updateFile(Long id, FileMetaData updatedFile) {
