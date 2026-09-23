@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.jha58.file_vault.file.FileService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.jha58.file_vault.file.FileRepository;
 import com.jha58.file_vault.file.FileMetaData;
@@ -22,6 +22,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private FileService fileService;
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
@@ -42,22 +45,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id) throws IOException {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         
-        List<FileMetaData> userFiles = fileRepository.findByUser(user);
-        for(FileMetaData file : userFiles) {
-            try {
-                Files.deleteIfExists(Paths.get(file.getStoragePath()));
-
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to delete file from disk: " + file.getName(), e);
-            }
-        }
-
-        fileRepository.deleteAll(userFiles);
-
+        fileService.deleteFilesByUser(user);
         userRepository.deleteById(id);
     }
 

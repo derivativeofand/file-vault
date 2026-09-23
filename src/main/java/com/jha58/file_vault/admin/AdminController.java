@@ -26,7 +26,7 @@ public class AdminController {
     }
 
     @DeleteMapping ("/users/{id}")
-    public void deleteUser(@PathVariable Long id) { 
+    public void deleteUser(@PathVariable Long id) throws IOException { 
         userService.deleteUser(id);
     }
 

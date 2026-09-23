@@ -7,8 +7,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.jha58.file_vault.user.User;
 import com.jha58.file_vault.user.UserRepository;
 import com.jha58.file_vault.rag.RagService;
+import org.springframework.ai.vectorstore.VectorStore;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +28,9 @@ public class FileService {
 
     @Autowired
     private RagService ragService;
+
+    @Autowired 
+    private VectorStore vectorStore;
 
     public List<FileMetaData> getAllFiles() {
 
@@ -110,7 +115,6 @@ public class FileService {
         FileMetaData file = fileRepository.findById(id).orElseThrow(() 
         -> new RuntimeException("File not found")); 
 
-
         boolean isAdmin = currentUser.getRole().contains("ADMIN");
         boolean isOwner = file.getOwner().getUsername().equals(username);
 
@@ -119,8 +123,26 @@ public class FileService {
             throw new RuntimeException("Access Denied");
         }
 
-        Files.deleteIfExists(Paths.get(file .getStoragePath()));
+        Files.deleteIfExists(Paths.get(file.getStoragePath()));
         fileRepository.deleteById(id);
+        ragService.deleteVectorsByFileId(id);
+    }
+
+    public void deleteFilesByUser(User user) throws IOException {
+        Long id  = user.getId();
+
+        List<FileMetaData> userFiles = fileRepository.findByUser(user);
+        for(FileMetaData file : userFiles) {
+            try {
+                Files.deleteIfExists(Paths.get(file.getStoragePath()));
+
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to delete file from disk: " + file.getName(), e);
+            }
+        }
+
+        fileRepository.deleteAll(userFiles);
+        ragService.deleteVectorsByUserId(id); 
     }
 
     public FileMetaData getFileByName(String fileName) {
