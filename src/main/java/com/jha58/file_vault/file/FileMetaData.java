@@ -3,6 +3,7 @@ package com.jha58.file_vault.file;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jha58.file_vault.user.User;
 
 import jakarta.persistence.*;
@@ -54,8 +55,13 @@ public class FileMetaData {
         this.user = user;
     }
 
+    @JsonIgnore 
     public User getOwner() {
         return user;
+    }
+
+    public String getOwnerName(String name) {
+        return user.getUsername();
     }
 
     public void setName(String name) {

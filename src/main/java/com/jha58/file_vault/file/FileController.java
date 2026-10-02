@@ -35,7 +35,6 @@ public class FileController {
         return fileService.getFileById(id);
     }
 
-
     @GetMapping("/filter") 
     public List<FileMetaData> getFilesByContentType(@RequestParam String contentType) {
         return fileService.getFilesByContentType(contentType);
