@@ -16,8 +16,8 @@ function Register() {
                 console.log(response.status);
                 if(response.status === 200) {
                     // Registration successful, redirect to login page
-                    navigate('/login');
                     console.log('Registration successful, redirecting to login page...');
+                    navigate('/login');
                 }
             } catch (error) {
                 console.error('Registration failed:', error);
@@ -30,11 +30,10 @@ function Register() {
             <label htmlFor="password">Password</label><br></br>
             <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}/><br></br>
 
-            <button type="button" onClick={() => navigate('/login')}>Back to Login</button> 
+            <button type="button" onClick={() => navigate('/login')}>Back to Login</button>
             <button type="submit">Register</button>
         </form>
     )
 }
-
 
 export default Register
