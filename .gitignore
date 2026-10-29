@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 CLAUDE.md
+.claude/
 
 ### STS ###
 .apt_generated
