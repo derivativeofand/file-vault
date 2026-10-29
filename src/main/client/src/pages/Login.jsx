@@ -9,7 +9,9 @@ function Login() {
     const [password, setPassword] = useState('');
 
     // On form submission, send a POST request to the backend with the username and password.
-    return (<form onSubmit={async (e) => {
+    return (
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+        <form className="w-full max-w-sm bg-white rounded-lg shadow-md p-8 space-y-5" onSubmit={async (e) => {
             // Prevent the default form submission behavior.
             e.preventDefault();
             try {
@@ -26,14 +28,23 @@ function Login() {
                 console.error('Login failed:', error);
             }
         }}>
-            <label htmlFor="username">Username</label><br></br>
-            <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)}/><br></br>
-            <label htmlFor="password">Password</label><br></br>
-            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}/><br></br>
+            <h1 className="text-2xl font-semibold text-gray-800 text-center">Log in</h1>
 
-            <button type="button" onClick={() => navigate('/register')}>Register</button> 
-            <button type="submit">Login</button>
+            <div className="space-y-1">
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
+            </div>
+            <div className="space-y-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"/>
+            </div>
+
+            <button type="submit" className="w-full rounded-md bg-blue-600 py-2 font-medium text-white hover:bg-blue-700 cursor-pointer">Login</button>
+            <button type="button" onClick={() => navigate('/register')} className="w-full text-sm text-blue-600 hover:underline cursor-pointer">Register</button>
         </form>
+        </div>
 )
 }
 

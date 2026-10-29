@@ -43,19 +43,30 @@ function Dashboard() {
     }, []);
 
     return (
-        <div>
-            <h1>Dashboard</h1><br></br>
-            <h2>Uploaded Files</h2>
-            
-            {/* // Display the list of uploaded files. Each file is represented as a list item. */}
-            <ul>
-                {files.map((file) => (
-                    <li key={file.id}>File Name: {file.name}</li>
-                ))}
-            </ul><br></br>
-            <label htmlFor="file-upload">Upload a file:</label>
-            <input type="file" id="file-upload" onChange={(e) => setSelectedFile(e.target.files[0])} /><br></br>
-            <button onClick={handleUpload}>Upload</button><br></br>
+        <div className="min-h-screen bg-gray-100 px-4 py-10">
+        <div className="mx-auto max-w-2xl bg-white rounded-lg shadow-md p-8 space-y-6">
+            <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
+
+            <div className="space-y-2">
+                <h2 className="text-lg font-medium text-gray-700">Uploaded Files</h2>
+
+                {/* // Display the list of uploaded files. Each file is represented as a list item. */}
+                <ul className="divide-y divide-gray-200 rounded-md border border-gray-200">
+                    {files.map((file) => (
+                        <li key={file.id} className="flex items-center justify-between px-4 py-3">
+                            <span className="truncate text-gray-800">{file.name}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <div className="space-y-2">
+                <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700">Upload a file</label>
+                <input type="file" id="file-upload" onChange={(e) => setSelectedFile(e.target.files[0])}
+                    className="block w-full text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-gray-100 file:px-4 file:py-2 hover:file:bg-gray-200 file:cursor-pointer"/>
+                <button onClick={handleUpload} className="w-full rounded-md bg-blue-600 py-2 font-medium text-white hover:bg-blue-700 cursor-pointer">Upload</button>
+            </div>
+        </div>
         </div>
         
     )
