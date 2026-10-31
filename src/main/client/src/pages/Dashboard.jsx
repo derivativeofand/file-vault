@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
-
+import { useState, useEffect, useContext } from 'react';
+import { UserContext } from './UserContext'
 import api from '../axios';
 
 function Dashboard() {
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
-
+    const { user } = useContext(UserContext);
+    // Fetch the list of uploaded files from the backend. It sends a GET request to the '/files' endpoint, including the authorization token in the headers. If successful, it updates the 'files' state with the retrieved data.
     async function fetchFiles() {
             try {
                 // Send a GET request to the backend to fetch the list of files, including the authorization token in the headers.
@@ -19,13 +20,14 @@ function Dashboard() {
             }
     }
 
+    // Handle the file upload process. If a file is selected, it creates a FormData object and sends it to the backend via a POST request.
     async function handleUpload() {
         if(!selectedFile) {
             console.error('No file selected for upload.');
             return;
         } else{
             const formData = new FormData();
-            formData.append('file', selectedFile);
+            formData.append('file', selectedFile); 
             try {
                 const response = await api.post('/files', formData, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
                 if(response.status === 200) {
@@ -38,12 +40,16 @@ function Dashboard() {
         }
     }
 
+    // Fetches the file everytime the /dashboard page is first built.
     useEffect(() => {
         fetchFiles();   
     }, []);
 
     return (
         <div className="min-h-screen bg-gray-100 px-4 py-10">
+            <div>
+                <h1>Hello {user}</h1>
+            </div>
         <div className="mx-auto max-w-2xl bg-white rounded-lg shadow-md p-8 space-y-6">
             <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
 

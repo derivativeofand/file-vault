@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState,useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import  { UserContext } from './UserContext'
 import api from '../axios'
 
 function Login() {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const { user, setUser } = useContext(UserContext);
 
     // On form submission, send a POST request to the backend with the username and password.
     return (
@@ -17,8 +18,10 @@ function Login() {
             try {
                 const response = await api.post('/auth/login', { username, password });
                 if(response.status === 200) {
+                    setUser(username);
                     const token = response.data;
                     localStorage.setItem('token', token);
+                    localStorage.setItem('user', username);
                     // Login successful, redirect to dashboard
                     console.log('Login successful, redirecting to dashboard...');
                     navigate('/dashboard');
