@@ -7,7 +7,7 @@ function Login() {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { user, setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
 
     // On form submission, send a POST request to the backend with the username and password.
     return (

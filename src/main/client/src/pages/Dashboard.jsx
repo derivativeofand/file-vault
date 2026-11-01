@@ -1,11 +1,14 @@
 import { useState, useEffect, useContext } from 'react';
 import { UserContext } from './UserContext'
+import { useNavigate } from 'react-router-dom';
+import NavBar from './NavBar'
 import api from '../axios';
 
 function Dashboard() {
+    const navigate = useNavigate();
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
-    const { user } = useContext(UserContext);
+    const { user,setUser } = useContext(UserContext);
     // Fetch the list of uploaded files from the backend. It sends a GET request to the '/files' endpoint, including the authorization token in the headers. If successful, it updates the 'files' state with the retrieved data.
     async function fetchFiles() {
             try {
@@ -46,10 +49,9 @@ function Dashboard() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gray-100 px-4 py-10">
-            <div>
-                <h1>Hello {user}</h1>
-            </div>
+        <div className="min-h-screen bg-gray-100">
+            <NavBar />
+        <div className="px-4 py-10">
         <div className="mx-auto max-w-2xl bg-white rounded-lg shadow-md p-8 space-y-6">
             <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
 
@@ -74,7 +76,7 @@ function Dashboard() {
             </div>
         </div>
         </div>
-        
+        </div>
     )
 }
 
