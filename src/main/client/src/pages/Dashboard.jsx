@@ -1,14 +1,12 @@
 import { useState, useEffect, useContext } from 'react';
-import { UserContext } from './UserContext'
-import { useNavigate } from 'react-router-dom';
-import NavBar from './NavBar'
+import NavBar from './NavBar';
 import api from '../axios';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Dashboard() {
     const navigate = useNavigate();
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
-    const { user,setUser } = useContext(UserContext);
     // Fetch the list of uploaded files from the backend. It sends a GET request to the '/files' endpoint, including the authorization token in the headers. If successful, it updates the 'files' state with the retrieved data.
     async function fetchFiles() {
             try {
@@ -23,6 +21,7 @@ function Dashboard() {
             }
     }
 
+
     // Handle the file upload process. If a file is selected, it creates a FormData object and sends it to the backend via a POST request.
     async function handleUpload() {
         if(!selectedFile) {
@@ -34,7 +33,7 @@ function Dashboard() {
             try {
                 const response = await api.post('/files', formData, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
                 if(response.status === 200) {
-                    console.log('File uploaed successfully.');
+                    console.log('File uploaded successfully.');
                     fetchFiles(); // Refresh the list of files after a successful upload.
                 }
             } catch (error) {
@@ -63,6 +62,7 @@ function Dashboard() {
                     {files.map((file) => (
                         <li key={file.id} className="flex items-center justify-between px-4 py-3">
                             <span className="truncate text-gray-800">{file.name}</span>
+                            <Link to={`/chat/${file.id}`}>Ask about File</Link>
                         </li>
                     ))}
                 </ul>
