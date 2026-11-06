@@ -14,7 +14,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat/:fileid" element = {<Chat />} />
+          <Route path="/chat/:fileId" element = {<Chat />} />
           <Route path="/" element={<Login />} /> 
       </Routes>
     </UserContext.Provider>
