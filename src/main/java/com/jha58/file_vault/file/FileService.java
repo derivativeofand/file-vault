@@ -81,18 +81,25 @@ public class FileService {
 
         // Create and save FileMetaData
         FileMetaData fileMetaData = new FileMetaData();
+
+        
         fileMetaData.setName(file.getOriginalFilename());
         fileMetaData.setContentType(file.getContentType());
         fileMetaData.setSize(file.getSize());
         fileMetaData.setOwner(user);
         fileMetaData.setStoragePath(storagePath.toString());
         fileMetaData.setUploadedAt(java.time.LocalDateTime.now());
+        FileMetaData savedFileMetaData = fileRepository.save(fileMetaData);
         
         // Save the file metadata to the database
-        FileMetaData savedFileMetaData = fileRepository.save(fileMetaData);
-
-        // Process the file with RagService
-        ragService.processFile(fileMetaData, file);
+        try {
+            // Process the file with RagService
+            ragService.processFile(fileMetaData, file);
+        } catch(Exception e) {
+            fileRepository.deleteById(fileMetaData.getId());
+            Files.deleteIfExists(storagePath);
+            throw e;
+        }
 
         return savedFileMetaData;
     }
