@@ -16,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.jha58.file_vault.file.FileMetaData;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.jha58.file_vault.user.User;
+import com.jha58.file_vault.user.UserRepository;
+import com.jha58.file_vault.file.FileRepository;
 
 @Service 
 public class RagService {    
@@ -30,6 +34,12 @@ public class RagService {
 
     @Autowired 
     private ChatModel chatModel;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FileRepository fileRepository;
     
     public void processFile(FileMetaData file, MultipartFile rawFile) throws IOException {
         String text = textExtractorService.extractText(rawFile);    
@@ -56,6 +66,16 @@ public class RagService {
     }
 
     public String answerQuestion(Long fileId, String question) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        FileMetaData file = fileRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File not found"));
+
+        // Safeguard for the case where the file's owner is not the currently authenticated user
+        if (!file.getOwner().getUsername().equals(username)) {
+            throw new RuntimeException("Access Denied");
+        }
+
         // Search for relevant chunks in the vector store based on the question and file ID
         FilterExpressionBuilder builder = new FilterExpressionBuilder();
         Filter.Expression filter = builder.eq("file_id", fileId.toString()).build();
